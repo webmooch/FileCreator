@@ -1,0 +1,30 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="FileCreator.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="FilePath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">junk.file</Value>
+    </Setting>
+    <Setting Name="FileSizeUnit" Type="FileCreator.Size" Scope="User">
+      <Value Profile="(Default)">MB</Value>
+    </Setting>
+    <Setting Name="FileSize" Type="System.String" Scope="User">
+      <Value Profile="(Default)">100</Value>
+    </Setting>
+    <Setting Name="ChunkSize" Type="System.String" Scope="User">
+      <Value Profile="(Default)">10</Value>
+    </Setting>
+    <Setting Name="ChunkSizeUnit" Type="FileCreator.Size" Scope="User">
+      <Value Profile="(Default)">MB</Value>
+    </Setting>
+    <Setting Name="ChunkDataType" Type="FileCreator.ChunkData" Scope="User">
+      <Value Profile="(Default)">Nulls</Value>
+    </Setting>
+    <Setting Name="StaticVersionUri" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">http://webmooch.net/LinkToLatestFileCreatorVersionData</Value>
+    </Setting>
+    <Setting Name="ProjectHomepageUri" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">http://webmooch.net/RedirectToFileCreatorHome.html</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

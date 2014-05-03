@@ -1,0 +1,168 @@
+﻿<Window 
+    x:Class="FileCreator.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:FileCreator"
+    xmlns:viewmodels="clr-namespace:FileCreator.ViewModels"
+    xmlns:converters="clr-namespace:FileCreator.Converters"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    Title="File Creator"
+    ResizeMode="NoResize"
+    Height="446"
+    Width="350"
+    Closing="Window_Closing"
+    Loaded="Window_Loaded"
+    WindowStartupLocation="CenterScreen">
+
+    <Window.DataContext>
+        <viewmodels:MainViewModel />
+    </Window.DataContext>
+
+    <Window.Resources>
+        <converters:StringContainsErrorToBoolConverter x:Key="StringContainsErrorToBoolConverter" />
+        <converters:BoolToInverseBoolConverter x:Key="BoolToInverseBoolConverter" />
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" FalseValue="Hidden" TrueValue="Visible" />
+        <converters:BoolToStringConverter x:Key="BoolToButtonTextConverter" FalseValue="Create File" TrueValue="Cancel" />
+        <converters:EnumItemsAreSameToBoolConverter x:Key="EnumItemsAreSameToBoolConverter" />
+
+        <ObjectDataProvider MethodName="GetValues" ObjectType="{x:Type sys:Enum}" x:Key="SizeDataProvider">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="local:Size" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+
+        <Style TargetType="Label">
+            <Setter Property="Margin" Value="0,10,0,0" />
+        </Style>
+
+        <Style TargetType="TextBox">
+            <Setter Property="MaxLength" Value="1000" />
+            <Setter Property="Margin" Value="0,0,10,0" />
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="true">
+                    <Setter Property="ToolTip" Value="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=(Validation.Errors).CurrentItem.ErrorContent}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="styleStatusTextBlock" TargetType="TextBlock">
+            <Setter Property="TextWrapping" Value="NoWrap" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Path=Text, RelativeSource={RelativeSource Self}, Converter={StaticResource StringContainsErrorToBoolConverter}}" Value="True">
+                    <Setter Property="Foreground" Value="Red" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="5">
+
+        <Grid.RowDefinitions>
+
+            <!--MENU-->
+            <RowDefinition Height="auto" />
+
+            <!--MAIN TITLE-->
+            <RowDefinition Height="50"/>
+
+            <!--SAVE AS-->
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+
+            <!--FILE SIZE-->
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+
+            <!--CHUNK SIZE-->
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+
+            <!--CHUNK DATA-->
+            <RowDefinition Height="auto" />
+
+            <!--'CREATE' BUTTON-->
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+
+            <!--STATUS-->
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2.5*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+
+        <Menu Margin ="0,0,0,0" Background ="Transparent" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
+            <MenuItem Header="_File">
+                <MenuItem Header="E_xit" Click="Exit_Click" />
+            </MenuItem>
+            <MenuItem Header="_Options">
+                <MenuItem Header="Restore _Default Values" Command="{Binding Path=RestoreDefaultValuesCommand}" />
+            </MenuItem>
+            <MenuItem Header="_Help">
+                <MenuItem Header="Visit Project _Homepage" Command="{Binding Path=VisitProjectHomepageCommand}" />
+                <MenuItem Header="Check For _Updates" Click="CheckForUpdates_Click" />
+            </MenuItem>
+        </Menu>
+
+        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24" Text="File Creator" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" />
+
+        <Label Target="{Binding ElementName=textboxFile}" Content="_Save File As" Grid.Row="2" Grid.Column="0" />
+        <TextBox ContextMenuOpening="FileContextMenu_Opening" MaxLength="1000" Grid.Row="3" Grid.Column="0" x:Name="textboxFile" Text="{Binding FilePath, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=true}" IsEnabled="{Binding OperationInProgress, Converter={StaticResource BoolToInverseBoolConverter}}" >
+            <TextBox.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="_Cut" Command="Cut" />
+                    <MenuItem Header="_Copy" Command="Copy"/>
+                    <MenuItem Header="_Paste" Command="Paste" />
+                    <MenuItem Header="_Select All" Command="SelectAll" />
+                    <Separator/>
+                    <MenuItem Header="Open _File" Command="{Binding OpenFileCommand}" x:Name="menuitemOpenFile" />
+                    <MenuItem Header="_Open File Directory" Command="{Binding OpenFileDirectoryCommand}" x:Name="menuitemOpenFileDirectory"/>
+                    <MenuItem Header="_Delete File" Command="{Binding DeleteFileCommand}" x:Name="menuitemDeleteFile" />
+                </ContextMenu>
+            </TextBox.ContextMenu>
+        </TextBox>
+        <Button Grid.Row="3" Grid.Column="1" Content="Browse" Command="{Binding PromptForFilePathAndSaveCommand}" IsEnabled="{Binding OperationInProgress, Converter={StaticResource BoolToInverseBoolConverter}}"/>
+
+        <Label Target="{Binding ElementName=textboxFileSize}" Content="_Total File Size" Grid.Row="4" Grid.Column="0" />
+        <TextBox MaxLength="19" x:Name="textboxFileSize" Grid.Row="5" Grid.Column="0" Text="{Binding FileSize, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=true, TargetNullValue=''}" IsEnabled="{Binding OperationInProgress, Converter={StaticResource BoolToInverseBoolConverter}}">
+            <TextBox.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Command="Cut" Header="_Cut" />
+                    <MenuItem Command="Copy" Header="_Copy" />
+                    <MenuItem Command="Paste" Header="_Paste" />
+                    <MenuItem Command="SelectAll" Header="_Select All" />
+                </ContextMenu>
+            </TextBox.ContextMenu>
+        </TextBox>
+        <ComboBox Grid.Row="5" Grid.Column="1" HorizontalContentAlignment="Center" ItemsSource="{Binding Source={StaticResource SizeDataProvider}}" Text="{Binding FileSizeUnits, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding OperationInProgress, Converter={StaticResource BoolToInverseBoolConverter}}"/>
+
+        <Label Target="{Binding ElementName=textboxChunkSize}" Content="Chunk _Write Size" Grid.Row="6" Grid.Column="0" />
+        <TextBox MaxLength="10" x:Name="textboxChunkSize" Grid.Row="7" Grid.Column="0" Text="{Binding ChunkSize, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=true, TargetNullValue=''}" IsEnabled="{Binding OperationInProgress, Converter={StaticResource BoolToInverseBoolConverter}}" >
+            <TextBox.ContextMenu>
+                <ContextMenu >
+                    <MenuItem Command="Cut" Header="_Cut" />
+                    <MenuItem Command="Copy" Header="_Copy" />
+                    <MenuItem Command="Paste" Header="_Paste" />
+                    <MenuItem Command="SelectAll" Header="_Select All" />
+                </ContextMenu>
+            </TextBox.ContextMenu>
+        </TextBox>
+        <ComboBox Grid.Row="7" Grid.Column="1" HorizontalContentAlignment="Center" ItemsSource="{Binding Source={StaticResource SizeDataProvider}}" Text="{Binding ChunkSizeUnits, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding OperationInProgress, Converter={StaticResource BoolToInverseBoolConverter}}" />
+
+        <Label Target="{Binding ElementName=stackpanelChunkData}" Content="Chunk _Data" Grid.Row="8" Grid.Column="0" />
+        <StackPanel x:Name="stackpanelChunkData" Grid.Row="9" Grid.Column="0" Orientation="Horizontal" IsEnabled="{Binding OperationInProgress, Converter={StaticResource BoolToInverseBoolConverter}}">
+            <RadioButton GroupName="ChunkDataGroup" Margin="5,0,0,0" Content="Random" IsChecked="{Binding Path=ChunkDataType, Converter={StaticResource EnumItemsAreSameToBoolConverter}, ConverterParameter={x:Static local:ChunkData.Randoms}}" />
+            <RadioButton GroupName="ChunkDataGroup"  Margin="40,0,0,0" Content="Null" IsChecked="{Binding Path=ChunkDataType, Converter={StaticResource EnumItemsAreSameToBoolConverter}, ConverterParameter={x:Static local:ChunkData.Nulls}}" />
+        </StackPanel>
+
+        <Button Grid.Row="10" Grid.Column="0" Grid.ColumnSpan="2" FontSize="18" Margin="0,25" Width="160" Command="{Binding CreateAndCancelCommand}" Content="{Binding OperationInProgress, Converter={StaticResource BoolToButtonTextConverter}}"/>
+
+        <TextBlock Grid.Row="11" Grid.Column="0" Style="{StaticResource styleStatusTextBlock}" Text="{Binding Path=StatusMessage, UpdateSourceTrigger=PropertyChanged}"/>
+        <ProgressBar Grid.Row="11" Grid.Column="1" Height="20" Visibility="{Binding OperationInProgress, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BoolToVisibilityConverter}}" Value="{Binding ProgressPercent}"/>
+
+    </Grid>
+
+</Window>
