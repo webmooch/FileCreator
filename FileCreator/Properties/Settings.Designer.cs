@@ -112,5 +112,14 @@ namespace FileCreator.Properties {
                 return ((string)(this["ProjectHomepageUri"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("support@webmooch.net")]
+        public string CrashEmailAddress {
+            get {
+                return ((string)(this["CrashEmailAddress"]));
+            }
+        }
     }
 }

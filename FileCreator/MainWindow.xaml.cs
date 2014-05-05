@@ -1,9 +1,11 @@
-﻿using FileCreator.Models;
+﻿using FileCreator.Helpers;
+using FileCreator.Models;
 using FileCreator.Properties;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -16,7 +18,46 @@ namespace FileCreator
     {
         public MainWindow()
         {
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             InitializeComponent();
+        }
+
+        void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            PromptToSendCrashReport(e);
+        }
+
+        private static void PromptToSendCrashReport(UnhandledExceptionEventArgs e)
+        {
+            if (e != null)
+            {
+                var exception = e.ExceptionObject as Exception;
+                if (exception != null)
+                {
+                    try
+                    {
+                        var stackTrace = new StackTrace(exception, true) == null ? "null" : new StackTrace(exception, true).ToString();
+                        var message = string.IsNullOrWhiteSpace(exception.Message) ? "null" : exception.Message;
+                        var targetSite = exception.TargetSite != null ? string.IsNullOrWhiteSpace(exception.StackTrace) ? "null" : exception.TargetSite.ToString() : "null";
+                        var hResult = exception.HResult;
+
+                        var response = MessageBox.Show("Sorry, an unexpected error has occurred.\r\n\r\nWould you please allow an error report to be sent to the developer?\r\n\r\nNo personally identifiable information is collected.", "Error", MessageBoxButton.YesNo, MessageBoxImage.Error);
+                        if (response == MessageBoxResult.Yes)
+                        {
+                            var subject = string.Format("Error: {0} v{1}", Assembly.GetExecutingAssembly().GetName().Name, Assembly.GetExecutingAssembly().GetName().Version);
+                            var body = string.Format("M:{0}{4}TS:{1}{4}hR:{2}{4}ST:{3}", message, targetSite, hResult, stackTrace, "|");
+                            PopupSendEmail(Settings.Default.CrashEmailAddress, subject, body);
+                        }
+                    }
+                    catch (Exception)
+                    { }
+                }
+            }
+        }
+
+        private static void PopupSendEmail(string emailAddress, string subject, string body)
+        {
+            Process.Start(string.Format("mailto:{0}?subject={1}&body={2}", emailAddress, subject, body));
         }
 
         private void Window_Closing(object sender, CancelEventArgs e)

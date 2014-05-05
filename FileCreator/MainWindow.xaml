@@ -154,8 +154,8 @@
 
         <Label Target="{Binding ElementName=stackpanelChunkData}" Content="Chunk _Data" Grid.Row="8" Grid.Column="0" />
         <StackPanel x:Name="stackpanelChunkData" Grid.Row="9" Grid.Column="0" Orientation="Horizontal" IsEnabled="{Binding OperationInProgress, Converter={StaticResource BoolToInverseBoolConverter}}">
-            <RadioButton GroupName="ChunkDataGroup" Margin="5,0,0,0" Content="Random" IsChecked="{Binding Path=ChunkDataType, Converter={StaticResource EnumItemsAreSameToBoolConverter}, ConverterParameter={x:Static local:ChunkData.Randoms}}" />
-            <RadioButton GroupName="ChunkDataGroup"  Margin="40,0,0,0" Content="Null" IsChecked="{Binding Path=ChunkDataType, Converter={StaticResource EnumItemsAreSameToBoolConverter}, ConverterParameter={x:Static local:ChunkData.Nulls}}" />
+            <RadioButton GroupName="ChunkDataGroup" Margin="5,0,0,0" Content="_Random" IsChecked="{Binding Path=ChunkDataType, Converter={StaticResource EnumItemsAreSameToBoolConverter}, ConverterParameter={x:Static local:ChunkData.Randoms}}" />
+            <RadioButton GroupName="ChunkDataGroup"  Margin="40,0,0,0" Content="_Null" IsChecked="{Binding Path=ChunkDataType, Converter={StaticResource EnumItemsAreSameToBoolConverter}, ConverterParameter={x:Static local:ChunkData.Nulls}}" />
         </StackPanel>
 
         <Button Grid.Row="10" Grid.Column="0" Grid.ColumnSpan="2" FontSize="18" Margin="0,25" Width="160" Command="{Binding CreateAndCancelCommand}" Content="{Binding OperationInProgress, Converter={StaticResource BoolToButtonTextConverter}}"/>

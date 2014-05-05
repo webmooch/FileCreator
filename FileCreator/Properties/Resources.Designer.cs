@@ -63,9 +63,9 @@ namespace FileCreator.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static System.Drawing.Icon File {
+        internal static System.Drawing.Icon newfile {
             get {
-                object obj = ResourceManager.GetObject("File", resourceCulture);
+                object obj = ResourceManager.GetObject("newfile", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }
