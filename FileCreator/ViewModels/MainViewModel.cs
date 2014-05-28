@@ -19,6 +19,7 @@ namespace FileCreator.ViewModels
     public class MainViewModel : INotifyPropertyChanged, IDataErrorInfo
     {
         // TODO: Add aggregate error handling
+        // TODO: Fix issue with file size not parsing (because it's too large) and error displaying 'chunk must be samller than filesize'
 
         private static readonly int MaxIntArrayLengthx64 = int.MaxValue - 56;
 
